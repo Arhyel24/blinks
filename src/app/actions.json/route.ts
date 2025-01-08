@@ -1,0 +1,26 @@
+import { ACTIONS_CORS_HEADERS, ActionsJson } from "@solana/actions";
+import { NextRequest } from "next/server";
+
+export const GET = async () => {
+   const payload: ActionsJson = {
+    rules: [
+      // Map all root level routes to an action
+      {
+        pathPattern: "/",
+        apiPath: "/api/create-coc-challenge/",
+      },
+      {
+        pathPattern: "/",
+        apiPath: `/api/join-coc-challenge/`,
+      },
+    ],
+  };
+
+  return new Response(JSON.stringify(payload), {
+    headers: ACTIONS_CORS_HEADERS,
+  });
+};
+
+// DO NOT FORGET TO INCLUDE THE `OPTIONS` HTTP METHOD
+// THIS WILL ENSURE CORS WORKS FOR BLINKS
+export const OPTIONS = GET;
