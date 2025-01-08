@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
       headers: {
           ...ACTIONS_CORS_HEADERS,
           "X-Action-Version": "2.1.3",
-          "X-Blockchain-Id": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+          "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
         },
     });
   }
@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
       headers: {
           ...ACTIONS_CORS_HEADERS,
           "X-Action-Version": "2.1.3",
-          "X-Blockchain-Id": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+          "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
         },
     });
   }
@@ -204,7 +204,7 @@ ${leaderboard
     headers: {
           ...ACTIONS_CORS_HEADERS,
           "X-Action-Version": "2.1.3",
-          "X-Blockchain-Id": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+          "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
         },
   });
 }
@@ -234,7 +234,7 @@ export async function POST(request: NextRequest) {
         headers: {
           ...ACTIONS_CORS_HEADERS,
           "X-Action-Version": "2.1.3",
-          "X-Blockchain-Id": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+          "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
         },
       });
     }
@@ -248,7 +248,7 @@ export async function POST(request: NextRequest) {
         headers: {
           ...ACTIONS_CORS_HEADERS,
           "X-Action-Version": "2.1.3",
-          "X-Blockchain-Id": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+          "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
         },
       });
     }
@@ -265,7 +265,7 @@ export async function POST(request: NextRequest) {
         headers: {
           ...ACTIONS_CORS_HEADERS,
           "X-Action-Version": "2.1.3",
-          "X-Blockchain-Id": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+          "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
         },
       });
     }
@@ -282,7 +282,7 @@ export async function POST(request: NextRequest) {
         headers: {
           ...ACTIONS_CORS_HEADERS,
           "X-Action-Version": "2.1.3",
-          "X-Blockchain-Id": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+          "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
         },
       });
     }
@@ -299,7 +299,7 @@ export async function POST(request: NextRequest) {
         headers: {
           ...ACTIONS_CORS_HEADERS,
           "X-Action-Version": "2.1.3",
-          "X-Blockchain-Id": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+          "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
         },
       });
     }
@@ -317,7 +317,7 @@ export async function POST(request: NextRequest) {
         headers: {
           ...ACTIONS_CORS_HEADERS,
           "X-Action-Version": "2.1.3",
-          "X-Blockchain-Id": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+          "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
         },
       });
     }
@@ -344,7 +344,7 @@ export async function POST(request: NextRequest) {
         headers: {
           ...ACTIONS_CORS_HEADERS,
           "X-Action-Version": "2.1.3",
-          "X-Blockchain-Id": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+          "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
         },
       });
     }
@@ -398,7 +398,7 @@ export async function POST(request: NextRequest) {
         headers: {
           ...ACTIONS_CORS_HEADERS,
           "X-Action-Version": "2.1.3",
-          "X-Blockchain-Id": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+          "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
         },
       });
     }
@@ -427,7 +427,7 @@ export async function POST(request: NextRequest) {
       headers: {
           ...ACTIONS_CORS_HEADERS,
           "X-Action-Version": "2.1.3",
-          "X-Blockchain-Id": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+          "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
         },
     });
   }

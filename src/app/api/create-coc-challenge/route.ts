@@ -89,7 +89,7 @@ export async function GET(request: NextRequest) {
     headers: {
       ...ACTIONS_CORS_HEADERS,
       "X-Action-Version": "2.1.3",
-      "X-Blockchain-Id": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+      "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
     },
   });
 }
@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
         headers: {
           ...ACTIONS_CORS_HEADERS,
           "X-Action-Version": "2.1.3",
-          "X-Blockchain-Id": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+          "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
         },
       });
     }
@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
         headers: {
           ...ACTIONS_CORS_HEADERS,
           "X-Action-Version": "2.1.3",
-          "X-Blockchain-Id": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+          "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
         },
       });
     }
@@ -153,7 +153,7 @@ export async function POST(request: NextRequest) {
         headers: {
           ...ACTIONS_CORS_HEADERS,
           "X-Action-Version": "2.1.3",
-          "X-Blockchain-Id": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+          "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
         },
       });
     }
@@ -170,6 +170,20 @@ export async function POST(request: NextRequest) {
     );
 
     const playerData = await qres.json();
+
+    if (!playerData) {
+      const errorRes: ActionError = {
+        message: "Failed to fetch player data.",
+      };
+      return new Response(JSON.stringify(errorRes), {
+        status: 400,
+        headers: {
+          ...ACTIONS_CORS_HEADERS,
+          "X-Action-Version": "2.1.3",
+          "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+        },
+      });
+    }
 
     const player = {
       playerID: tag,
@@ -226,7 +240,7 @@ export async function POST(request: NextRequest) {
         headers: {
           ...ACTIONS_CORS_HEADERS,
           "X-Action-Version": "2.1.3",
-          "X-Blockchain-Id": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+          "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
         },
       });
     }
@@ -256,7 +270,7 @@ export async function POST(request: NextRequest) {
       headers: {
         ...ACTIONS_CORS_HEADERS,
         "X-Action-Version": "2.1.3",
-        "X-Blockchain-Id": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+        "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
       },
     });
   }
