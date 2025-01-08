@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
   const response: ActionGetResponse = {
     icon: "https://i.ibb.co/zQXg3Hm/4f69bf9d37b9ef9528a999486176660f.jpg",
     description: `
-**Settle the score in a head-to-head showdown! The Royal Duel** lets you challenge your friends to a wagered battle of skill and strategy. Set the stakes, define the time limit, and prove your dominance in the arena. The victor claims both the bragging rights and the wagered amount.
+**Settle the score in a head-to-head showdown! The Royal Duel** consts you challenge your friends to a wagered battle of skill and strategy. Set the stakes, define the time limit, and prove your dominance in the arena. The victor claims both the bragging rights and the wagered amount.
 
 **Here's the intel:**
 
@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
 
 ---
 
-**Ready to duel? Issue your Royal Summons and let the clash begin!**
+**Ready to duel? Issue your Royal Summons and const the clash begin!**
 `,
     title: "Clash Royale: The Royal Duel",
     label: "Create challenge",
@@ -107,7 +107,7 @@ export async function POST(request: NextRequest) {
 
     // Validate input
     if (!amount || !tag || !duration) {
-      let errorRes: ActionError = {
+      const errorRes: ActionError = {
         message: "Amount, duration and tag must be provided",
       };
       return new Response(JSON.stringify(errorRes), {
@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
     try {
       sender = new PublicKey(body.account);
     } catch {
-      let errorRes: ActionError = {
+      const errorRes: ActionError = {
         message: "Invalid account",
       };
       return new Response(JSON.stringify(errorRes), {
@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
     const mongoDB = await connectToMongoDB();
 
     if (!mongoDB) {
-      let errorRes: ActionError = {
+      const errorRes: ActionError = {
         message: "Some error occurred, please try again",
       };
       return new Response(JSON.stringify(errorRes), {
@@ -200,7 +200,7 @@ export async function POST(request: NextRequest) {
     const requiredBalance = amount * LAMPORTS_PER_SOL + fee!;
 
     if (balance < requiredBalance) {
-      let errorRes: ActionError = {
+      const errorRes: ActionError = {
         message: `Insufficient funds. Available: ${
           balance * LAMPORTS_PER_SOL
         } SOL, Needed: ${requiredBalance.toFixed(6)} SOL`,
@@ -221,14 +221,14 @@ export async function POST(request: NextRequest) {
       fields: {
         type: "transaction",
         transaction,
-        message: `The challenge is on! Share this link with your friends and let the games begin: ${uri}`,
+        message: `The challenge is on! Share this link with your friends and const the games begin: ${uri}`,
       },
     });
 
     return NextResponse.json(payload, { headers: ACTIONS_CORS_HEADERS });
   } catch (error) {
     console.error("Error processing POST request:", error);
-    let errorRes: ActionError = {
+    const errorRes: ActionError = {
       message: "An error occurred while processing the request.",
     };
     return new Response(JSON.stringify(errorRes), {

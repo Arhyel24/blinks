@@ -29,9 +29,8 @@ export async function GET(request: NextRequest) {
   const url = new URL(request.url);
   const gameID = url.searchParams.get("gameID");
 
-  var signature;
   if (!gameID) {
-    let errorRes: ActionError = {
+    const errorRes: ActionError = {
       message: "Game ID not found",
     };
     return new Response(JSON.stringify(errorRes), {
@@ -46,7 +45,7 @@ export async function GET(request: NextRequest) {
   const gameRecord = await GameRecord.findOne({ gameID });
 
   if (!gameRecord) {
-    let errorRes: ActionError = {
+    const errorRes: ActionError = {
       message: `No game found with game ID ${gameID}`,
     };
     return new Response(JSON.stringify(errorRes), {
@@ -98,28 +97,28 @@ export async function GET(request: NextRequest) {
 
   const hasGameEnded = new Date() >= gameEndTime;
 
-  if (hasGameEnded && gameRecord.status !== "completed") {
+  if (hasGameEnded && gameRecord.status !== "compconsted") {
     const winnerPubkey = new PublicKey(leaderboard[0].pubkey);
 
     const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
 
-    const fromWallet = Keypair.fromSecretKey(
+    const fromWalconst = Keypair.fromSecretKey(
       bs58.decode(process.env.SECRET_KEY!)
     );
 
     const transaction = new Transaction().add(
       SystemProgram.transfer({
-        fromPubkey: fromWallet.publicKey,
+        fromPubkey: fromWalconst.publicKey,
         toPubkey: winnerPubkey,
         lamports: gameRecord.prizePool * LAMPORTS_PER_SOL,
       })
     );
 
-    signature = await sendAndConfirmTransaction(connection, transaction, [
-      fromWallet,
+    const signature = await sendAndConfirmTransaction(connection, transaction, [
+      fromWalconst,
     ]);
 
-    gameRecord.status = "completed";
+    gameRecord.status = "compconsted";
     gameRecord.signature = signature;
 
     await gameRecord.save();
@@ -170,7 +169,7 @@ ${leaderboard
 
 ---
 
-**Stay in the arena! Fight for glory and the spoils of victory. Let the clash continue!**`,
+**Stay in the arena! Fight for glory and the spoils of victory. const the clash continue!**`,
     title: "Clash Royale: The Royal Duel",
     label: "Join challenge",
     error: {
@@ -208,17 +207,14 @@ export async function POST(request: NextRequest) {
     const amount = Number(url.searchParams.get("amount"));
     const tag = url.searchParams.get("tag")?.slice(1);
     const gameID = url.searchParams.get("gameID");
-    const duration = Number(url.searchParams.get("duration"));
 
     const gameAccount = new PublicKey(
       "4tHXydupmCFzqqzRLBnzu5iSttatVwjPjx48A45keay8"
     );
 
-    let errorRes: ActionError;
-
-    // Validate input
+     // Validate input
     if (!tag) {
-      let errorRes: ActionError = {
+      const errorRes: ActionError = {
         message: "Player tag must be provided",
       };
       return new Response(JSON.stringify(errorRes), {
@@ -228,7 +224,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (!gameID) {
-      let errorRes: ActionError = {
+      const errorRes: ActionError = {
         message: "Game ID not found",
       };
       return new Response(JSON.stringify(errorRes), {
@@ -241,7 +237,7 @@ export async function POST(request: NextRequest) {
     const gameRec = await GameRecord.findOne({ gameID });
 
     if (!gameRec) {
-      let errorRes: ActionError = {
+      const errorRes: ActionError = {
         message: `No game found with game ID ${gameID}`,
       };
       return new Response(JSON.stringify(errorRes), {
@@ -254,7 +250,7 @@ export async function POST(request: NextRequest) {
     try {
       sender = new PublicKey(body.account);
     } catch {
-      let errorRes: ActionError = {
+      const errorRes: ActionError = {
         message: "Invalid account",
       };
       return new Response(JSON.stringify(errorRes), {
@@ -267,7 +263,7 @@ export async function POST(request: NextRequest) {
     const mongoDB = await connectToMongoDB();
 
     if (!mongoDB) {
-      let errorRes: ActionError = {
+      const errorRes: ActionError = {
         message: "Some error occurred, please try again",
       };
       return new Response(JSON.stringify(errorRes), {
@@ -281,7 +277,7 @@ export async function POST(request: NextRequest) {
     );
 
     if (existingPlayer) {
-      let errorRes: ActionError = {
+      const errorRes: ActionError = {
         message: "Player already exists in the game",
       };
       return new Response(JSON.stringify(errorRes), {
@@ -304,7 +300,7 @@ export async function POST(request: NextRequest) {
     const playerData = await qres.json();
 
     if (!playerData) {
-      let errorRes: ActionError = {
+      const errorRes: ActionError = {
         message: `No player found with the provided ID: #${tag}`,
       };
       return new Response(JSON.stringify(errorRes), {
@@ -352,7 +348,7 @@ export async function POST(request: NextRequest) {
     const requiredBalance = amount * LAMPORTS_PER_SOL + fee!;
 
     if (balance < requiredBalance) {
-      let errorRes: ActionError = {
+      const errorRes: ActionError = {
         message: `Insufficient funds. Available: ${
           balance * LAMPORTS_PER_SOL
         } SOL, Needed: ${requiredBalance.toFixed(6)} SOL`,
@@ -379,7 +375,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(payload, { headers: ACTIONS_CORS_HEADERS });
   } catch (error) {
     console.error("Error processing POST request:", error);
-    let errorRes: ActionError = {
+    const errorRes: ActionError = {
       message: "An error occurred while processing the request.",
     };
     return new Response(JSON.stringify(errorRes), {
