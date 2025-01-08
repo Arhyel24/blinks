@@ -171,6 +171,8 @@ export async function POST(request: NextRequest) {
 
     const playerData = await qres.json();
 
+    console.log(playerData);
+
     if (!playerData) {
       const errorRes: ActionError = {
         message: "Failed to fetch player data.",
