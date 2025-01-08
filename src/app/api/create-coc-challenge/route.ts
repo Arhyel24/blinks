@@ -86,7 +86,11 @@ export async function GET(request: NextRequest) {
     },
   };
   return NextResponse.json(response, {
-    headers: ACTIONS_CORS_HEADERS,
+    headers: {
+      ...ACTIONS_CORS_HEADERS,
+      "X-Action-Version": "2.1.3",
+      "X-Blockchain-Id": "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1",
+    },
   });
 }
 
@@ -112,7 +116,11 @@ export async function POST(request: NextRequest) {
       };
       return new Response(JSON.stringify(errorRes), {
         status: 400,
-        headers: ACTIONS_CORS_HEADERS,
+        headers: {
+          ...ACTIONS_CORS_HEADERS,
+          "X-Action-Version": "2.1.3",
+          "X-Blockchain-Id": "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1",
+        },
       });
     }
 
@@ -125,7 +133,11 @@ export async function POST(request: NextRequest) {
       };
       return new Response(JSON.stringify(errorRes), {
         status: 400,
-        headers: ACTIONS_CORS_HEADERS,
+        headers: {
+          ...ACTIONS_CORS_HEADERS,
+          "X-Action-Version": "2.1.3",
+          "X-Blockchain-Id": "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1",
+        },
       });
     }
 
@@ -138,7 +150,11 @@ export async function POST(request: NextRequest) {
       };
       return new Response(JSON.stringify(errorRes), {
         status: 400,
-        headers: ACTIONS_CORS_HEADERS,
+        headers: {
+          ...ACTIONS_CORS_HEADERS,
+          "X-Action-Version": "2.1.3",
+          "X-Blockchain-Id": "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1",
+        },
       });
     }
 
@@ -207,11 +223,15 @@ export async function POST(request: NextRequest) {
       };
       return NextResponse.json(errorRes, {
         status: 400,
-        headers: ACTIONS_CORS_HEADERS,
+        headers: {
+          ...ACTIONS_CORS_HEADERS,
+          "X-Action-Version": "2.1.3",
+          "X-Blockchain-Id": "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1",
+        },
       });
     }
 
-    const baseuri = `${url.origin}/api/join-coc-challenge/?gameID=${savedRecord.gameID}`
+    const baseuri = `${url.origin}/api/join-coc-challenge/?gameID=${savedRecord.gameID}`;
     const encodedURI = encodeURIComponent(baseuri);
 
     const uri = `https://dial.to/?action=solana-action%3A${encodedURI}`;
@@ -233,7 +253,11 @@ export async function POST(request: NextRequest) {
     };
     return new Response(JSON.stringify(errorRes), {
       status: 400,
-      headers: ACTIONS_CORS_HEADERS,
+      headers: {
+        ...ACTIONS_CORS_HEADERS,
+        "X-Action-Version": "2.1.3",
+        "X-Blockchain-Id": "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1",
+      },
     });
   }
 }

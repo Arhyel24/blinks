@@ -35,7 +35,11 @@ export async function GET(request: NextRequest) {
     };
     return new Response(JSON.stringify(errorRes), {
       status: 400,
-      headers: ACTIONS_CORS_HEADERS,
+      headers: {
+          ...ACTIONS_CORS_HEADERS,
+          "X-Action-Version": "2.1.3",
+          "X-Blockchain-Id": "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1",
+        },
     });
   }
 
@@ -50,7 +54,11 @@ export async function GET(request: NextRequest) {
     };
     return new Response(JSON.stringify(errorRes), {
       status: 400,
-      headers: ACTIONS_CORS_HEADERS,
+      headers: {
+          ...ACTIONS_CORS_HEADERS,
+          "X-Action-Version": "2.1.3",
+          "X-Blockchain-Id": "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1",
+        },
     });
   }
 
@@ -193,7 +201,11 @@ ${leaderboard
     disabled: hasGameEnded,
   };
   return NextResponse.json(response, {
-    headers: ACTIONS_CORS_HEADERS,
+    headers: {
+          ...ACTIONS_CORS_HEADERS,
+          "X-Action-Version": "2.1.3",
+          "X-Blockchain-Id": "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1",
+        },
   });
 }
 
@@ -212,14 +224,18 @@ export async function POST(request: NextRequest) {
       "4tHXydupmCFzqqzRLBnzu5iSttatVwjPjx48A45keay8"
     );
 
-     // Validate input
+    // Validate input
     if (!tag) {
       const errorRes: ActionError = {
         message: "Player tag must be provided",
       };
       return new Response(JSON.stringify(errorRes), {
         status: 400,
-        headers: ACTIONS_CORS_HEADERS,
+        headers: {
+          ...ACTIONS_CORS_HEADERS,
+          "X-Action-Version": "2.1.3",
+          "X-Blockchain-Id": "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1",
+        },
       });
     }
 
@@ -229,7 +245,11 @@ export async function POST(request: NextRequest) {
       };
       return new Response(JSON.stringify(errorRes), {
         status: 400,
-        headers: ACTIONS_CORS_HEADERS,
+        headers: {
+          ...ACTIONS_CORS_HEADERS,
+          "X-Action-Version": "2.1.3",
+          "X-Blockchain-Id": "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1",
+        },
       });
     }
 
@@ -242,7 +262,11 @@ export async function POST(request: NextRequest) {
       };
       return new Response(JSON.stringify(errorRes), {
         status: 400,
-        headers: ACTIONS_CORS_HEADERS,
+        headers: {
+          ...ACTIONS_CORS_HEADERS,
+          "X-Action-Version": "2.1.3",
+          "X-Blockchain-Id": "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1",
+        },
       });
     }
 
@@ -255,7 +279,11 @@ export async function POST(request: NextRequest) {
       };
       return new Response(JSON.stringify(errorRes), {
         status: 400,
-        headers: ACTIONS_CORS_HEADERS,
+        headers: {
+          ...ACTIONS_CORS_HEADERS,
+          "X-Action-Version": "2.1.3",
+          "X-Blockchain-Id": "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1",
+        },
       });
     }
 
@@ -268,7 +296,11 @@ export async function POST(request: NextRequest) {
       };
       return new Response(JSON.stringify(errorRes), {
         status: 400,
-        headers: ACTIONS_CORS_HEADERS,
+        headers: {
+          ...ACTIONS_CORS_HEADERS,
+          "X-Action-Version": "2.1.3",
+          "X-Blockchain-Id": "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1",
+        },
       });
     }
 
@@ -282,7 +314,11 @@ export async function POST(request: NextRequest) {
       };
       return new Response(JSON.stringify(errorRes), {
         status: 400,
-        headers: ACTIONS_CORS_HEADERS,
+        headers: {
+          ...ACTIONS_CORS_HEADERS,
+          "X-Action-Version": "2.1.3",
+          "X-Blockchain-Id": "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1",
+        },
       });
     }
 
@@ -305,7 +341,11 @@ export async function POST(request: NextRequest) {
       };
       return new Response(JSON.stringify(errorRes), {
         status: 400,
-        headers: ACTIONS_CORS_HEADERS,
+        headers: {
+          ...ACTIONS_CORS_HEADERS,
+          "X-Action-Version": "2.1.3",
+          "X-Blockchain-Id": "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1",
+        },
       });
     }
     // Add the new player to the game
@@ -355,7 +395,11 @@ export async function POST(request: NextRequest) {
       };
       return NextResponse.json(errorRes, {
         status: 400,
-        headers: ACTIONS_CORS_HEADERS,
+        headers: {
+          ...ACTIONS_CORS_HEADERS,
+          "X-Action-Version": "2.1.3",
+          "X-Blockchain-Id": "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1",
+        },
       });
     }
 
@@ -380,7 +424,11 @@ export async function POST(request: NextRequest) {
     };
     return new Response(JSON.stringify(errorRes), {
       status: 400,
-      headers: ACTIONS_CORS_HEADERS,
+      headers: {
+          ...ACTIONS_CORS_HEADERS,
+          "X-Action-Version": "2.1.3",
+          "X-Blockchain-Id": "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1",
+        },
     });
   }
 }
