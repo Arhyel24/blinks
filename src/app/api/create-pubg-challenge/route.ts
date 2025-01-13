@@ -17,6 +17,8 @@ import {
 } from "@solana/web3.js";
 import GameRecord from "@/app/model/gameSchema";
 import { connectToMongoDB } from "@/app/lib/connectDB";
+import { FetchPlayerId, FetchPlayerStats } from "@/actions/fetch-playerid";
+import { createErrorResponse } from "@/actions/error-reponse";
 
 // #YU80RGRG8;
 // #89YQU2PVQ
@@ -26,22 +28,11 @@ export async function GET(request: NextRequest) {
   const url = new URL(request.url);
 
   const response: ActionGetResponse = {
-    icon: "https://i.ibb.co/zQXg3Hm/4f69bf9d37b9ef9528a999486176660f.jpg",
-    description: `
-**Settle the score in a head-to-head showdown! The Royal Duel** consts you challenge your friends to a wagered battle of skill and strategy. Set the stakes, define the time limit, and prove your dominance in the arena. The victor claims both the bragging rights and the wagered amount.
-
-**Here's the intel:**
-
-1.  **Issue the Challenge!:** As the challenger, you'll provide your username, the wager amount, and the duration of the duel. This creates the official challenge.
-2.  **Share the Royal Summons!:** You'll receive a unique link to share with your chosen opponent(s).
-3.  **Accept the Duel!:** Your opponent(s) use the link to accept the challenge and enter their username to confirm their participation.
-4.  **Clash for the Crown!:** Battle within the specified timeframe. Wins are tracked to determine the ultimate victor.
-
----
-
-**Ready to duel? Issue your Royal Summons and const the clash begin!**
+    icon: "https://i.ibb.co/tcbC6rW/Gemini-Generated-Image-dzxegldzxegldzxe.jpg",
+    description: `\n**Get ready for an adrenaline-pumping PUBG Solo TPP Kill Challenge!**\n\nIt's not just about surviving; it's about dominating the battlefield and outgunning your opponent in a battle of pure skill and strategy. This is your chance to prove you have what it takes to be the ultimate PUBG champion. Whether you're sneaking through the grass or charging into a firefight, every kill counts towards your victory. Set your stakes, pick your fight, and get ready to take on your rivals in an intense, wagered Solo TPP match.\n\n**How to Play:**\n\n1.  **Issue Your Challenge!:** As the challenger, you’ll set the wager amount (in SOL) and choose the match duration. You’re the one setting the terms of this showdown.\n2.  **Send Out the Call!:** Once you’ve created your challenge, you’ll get a unique link to share with your opponent(s). Share the link to summon them to battle!\n3.  **Accept the Duel!:** Your opponent(s) will accept your challenge by clicking on the link, entering their PUBG player tag to confirm, and preparing for combat.\n4.  **Fight for the Top Spot!:** Once the match begins, it’s a free-for-all. The countdown ticks away as you battle for kills. The player with the most kills at the end of the match wins the challenge and claims the wagered amount!\n\nWith each kill, you get closer to victory and bragging rights as the ultimate solo kill king. The battleground is calling, and it’s time to answer!\n\n---\n\n**Are you ready to claim your victory? Issue your challenge now, and may the best marksman win!**\n
+  
 `,
-    title: "Clash Royale: The Royal Duel",
+    title: "PUBG Solo TPP: Kill Challenge",
     label: "Create challenge",
     error: {
       message: "Some error occurred, please refresh",
@@ -56,15 +47,18 @@ export async function GET(request: NextRequest) {
             {
               name: "amount",
               label: "Set wager amount in SOL",
+              required: true,
             },
             {
               name: "tag",
-              label: "Enter your player tag (e.g #QRPQLGYGR)",
+              label: "Enter your in-game username",
+              required: true,
             },
             {
               name: "duration",
               label: "Select the duration",
               type: "select",
+              required: true,
               options: [
                 {
                   value: "10",
@@ -102,7 +96,7 @@ export async function POST(request: NextRequest) {
     const url = new URL(request.url);
 
     const amount = Number(url.searchParams.get("amount"));
-    const tag = url.searchParams.get("tag")?.slice(1);
+    const tag = url.searchParams.get("tag");
     const duration = Number(url.searchParams.get("duration"));
 
     const gameAccount = new PublicKey(
@@ -111,86 +105,35 @@ export async function POST(request: NextRequest) {
 
     // Validate input
     if (!amount || !tag || !duration) {
-      const errorRes: ActionError = {
-        message: "Amount, duration and tag must be provided",
-      };
-      return new Response(JSON.stringify(errorRes), {
-        status: 400,
-        headers: {
-          ...ACTIONS_CORS_HEADERS,
-          "X-Action-Version": "2.1.3",
-          "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
-        },
-      });
+      return createErrorResponse("Amount, duration and tag must be provided");
     }
 
     let sender: PublicKey;
     try {
       sender = new PublicKey(body.account);
     } catch {
-      const errorRes: ActionError = {
-        message: "Invalid account",
-      };
-      return new Response(JSON.stringify(errorRes), {
-        status: 400,
-        headers: {
-          ...ACTIONS_CORS_HEADERS,
-          "X-Action-Version": "2.1.3",
-          "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
-        },
-      });
+      return createErrorResponse("Invalid account");
     }
 
     // Connect to MongoDB and create a new game record
     const mongoDB = await connectToMongoDB();
 
     if (!mongoDB) {
-      const errorRes: ActionError = {
-        message: "Some error occurred, please try again",
-      };
-      return new Response(JSON.stringify(errorRes), {
-        status: 400,
-        headers: {
-          ...ACTIONS_CORS_HEADERS,
-          "X-Action-Version": "2.1.3",
-          "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
-        },
-      });
+      return createErrorResponse("Failed to connect to database");
     }
 
-    const qres = await fetch(
-      `https://api.clashofclans.com/v1/players/%23${tag}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/vnd.api+json",
-          Authorization: `Bearer ${process.env.COC_API_KEY}`,
-        },
-      }
-    );
+    const playerId = await FetchPlayerId(tag);
 
-    const playerData = await qres.json();
-
-    console.log(playerData);
-
-    if (!playerData) {
-      const errorRes: ActionError = {
-        message: "Failed to fetch player data.",
-      };
-      return new Response(JSON.stringify(errorRes), {
-        status: 400,
-        headers: {
-          ...ACTIONS_CORS_HEADERS,
-          "X-Action-Version": "2.1.3",
-          "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
-        },
-      });
+    if (!playerId) {
+      return createErrorResponse("Failed to find player");
     }
+
+    const kills = await FetchPlayerStats(playerId);
 
     const player = {
       playerID: tag,
       pubkey: body.account,
-      wins: playerData.attackWins,
+      wins: kills,
     };
 
     const gameRecord = new GameRecord({
@@ -232,19 +175,11 @@ export async function POST(request: NextRequest) {
     const requiredBalance = amount * LAMPORTS_PER_SOL + fee!;
 
     if (balance < requiredBalance) {
-      const errorRes: ActionError = {
-        message: `Insufficient funds. Available: ${
+      return createErrorResponse(
+        `Insufficient funds. Available: ${
           balance * LAMPORTS_PER_SOL
-        } SOL, Needed: ${requiredBalance.toFixed(6)} SOL`,
-      };
-      return NextResponse.json(errorRes, {
-        status: 400,
-        headers: {
-          ...ACTIONS_CORS_HEADERS,
-          "X-Action-Version": "2.1.3",
-          "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
-        },
-      });
+        } SOL, Needed: ${requiredBalance.toFixed(6)} SOL`
+      );
     }
 
     const baseuri = `${url.origin}/api/join-coc-challenge/?gameID=${savedRecord.gameID}`;
@@ -264,16 +199,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(payload, { headers: ACTIONS_CORS_HEADERS });
   } catch (error) {
     console.error("Error processing POST request:", error);
-    const errorRes: ActionError = {
-      message: "An error occurred while processing the request.",
-    };
-    return new Response(JSON.stringify(errorRes), {
-      status: 400,
-      headers: {
-        ...ACTIONS_CORS_HEADERS,
-        "X-Action-Version": "2.1.3",
-        "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
-      },
-    });
+    return createErrorResponse((error as Error).message);
   }
 }

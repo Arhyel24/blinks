@@ -27,6 +27,7 @@ interface IGameRecord extends Document {
   prizePool: number;
   players: IPlayer[]; // Array of public keys
   timeFrame: number; // How long the game lasts
+  winner: IPlayer; // The player who won the game
   startTime: Date;
   status: string;
   signature: string;
@@ -62,6 +63,9 @@ const GameRecordSchema: Schema = new Schema<IGameRecord>({
       validator: (timeFrame: number) => timeFrame > 0,
       message: "Time frame must be a positive number.",
     },
+  },
+  winner: {
+    type: PlayerSchema,
   },
   startTime: {
     type: Date,

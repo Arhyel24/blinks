@@ -20,6 +20,8 @@ import {
 import GameRecord from "@/app/model/gameSchema";
 import { connectToMongoDB } from "@/app/lib/connectDB";
 import bs58 from "bs58";
+import { createErrorResponse } from "@/actions/error-reponse";
+import { FetchPlayerId, FetchPlayerStats } from "@/actions/fetch-playerid";
 
 // #YU80RGRG8;
 // #89YQU2PVQ
@@ -30,17 +32,7 @@ export async function GET(request: NextRequest) {
   const gameID = url.searchParams.get("gameID");
 
   if (!gameID) {
-    const errorRes: ActionError = {
-      message: "Game ID not found",
-    };
-    return new Response(JSON.stringify(errorRes), {
-      status: 400,
-      headers: {
-          ...ACTIONS_CORS_HEADERS,
-          "X-Action-Version": "2.1.3",
-          "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
-        },
-    });
+    return createErrorResponse("Game ID not found", 404);
   }
 
   await connectToMongoDB();
@@ -49,38 +41,19 @@ export async function GET(request: NextRequest) {
   const gameRecord = await GameRecord.findOne({ gameID });
 
   if (!gameRecord) {
-    const errorRes: ActionError = {
-      message: `No game found with game ID ${gameID}`,
-    };
-    return new Response(JSON.stringify(errorRes), {
-      status: 400,
-      headers: {
-          ...ACTIONS_CORS_HEADERS,
-          "X-Action-Version": "2.1.3",
-          "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
-        },
-    });
+    return createErrorResponse(`No game found with game ID ${gameID}`, 404);
   }
 
-  const fetchPlayerWins = async (playerID: string): Promise<number> => {
+  const fetchPlayerWins = async (tag: string): Promise<number> => {
     try {
-      const qres = await fetch(
-        `https://api.clashofclans.com/v1/players/%23${playerID}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/vnd.api+json",
-            Authorization: `Bearer ${process.env.COC_API_KEY}`,
-          },
-        }
-      );
+      const playerId = await FetchPlayerId(tag);
 
-      const playerData = await qres.json();
+      const kills = await FetchPlayerStats(playerId);
 
-      return playerData.attackWins;
+      return kills;
     } catch (error) {
-      console.error(`Failed to fetch wins for player ${playerID}:`, error);
-      return 0; // Default to 0 if the API call fails
+      console.error(`Failed to fetch wins for player ${tag}:`, error);
+      return 0;
     }
   };
 
@@ -105,7 +78,7 @@ export async function GET(request: NextRequest) {
 
   const hasGameEnded = new Date() >= gameEndTime;
 
-  if (hasGameEnded && gameRecord.status !== "compconsted") {
+  if (hasGameEnded && gameRecord.status !== "completed") {
     const winnerPubkey = new PublicKey(leaderboard[0].pubkey);
 
     const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
@@ -126,7 +99,13 @@ export async function GET(request: NextRequest) {
       fromWalconst,
     ]);
 
-    gameRecord.status = "compconsted";
+    gameRecord.winner = {
+      playerID: leaderboard[0].playerID,
+      pubkey: leaderboard[0].pubkey,
+      wins: leaderboard[0].wins,
+    };
+
+    gameRecord.status = "completed";
     gameRecord.signature = signature;
 
     await gameRecord.save();
@@ -140,7 +119,7 @@ export async function GET(request: NextRequest) {
   );
 
   const response: ActionGetResponse = {
-    icon: "https://i.ibb.co/zQXg3Hm/4f69bf9d37b9ef9528a999486176660f.jpg",
+    icon: "https://i.ibb.co/tcbC6rW/Gemini-Generated-Image-dzxegldzxegldzxe.jpg",
     description: `**The Royal Duel has Begun!** The stage is set, and the battle is underway. **The Royal Duel** challenges you to prove your skill and strategy in a wagered head-to-head showdown. The stakes are high, the time is ticking, and the victor takes it all.
 
 **Game Details:**
@@ -154,14 +133,14 @@ export async function GET(request: NextRequest) {
 ${
   !hasGameEnded
     ? `- **Remaining time:** ${timeRemaining} mins`
-    : `Game has ended and user has been credited, [view on solscan](http://solscan.io/tx/${gameRecord.signature})`
+    : `Game has ended. \n ${gameRecord.winner.playerID} won with  ${gameRecord.winner.wins} wins and had been paid  ${gameRecord.prizePool} SOL [view on solscan](http://solscan.io/tx/${gameRecord.signature})`
 }
 
 **Leaderboard:**
 ${leaderboard
   .map(
     (player, index) =>
-      `  ${index + 1}. #${player.playerID}: ${player.wins} ${
+      `  ${index + 1}. ${player.playerID}: ${player.wins} ${
         index === 0 && hasGameEnded ? " -  Won the game" : ""
       }`
   )
@@ -178,7 +157,7 @@ ${leaderboard
 ---
 
 **Stay in the arena! Fight for glory and the spoils of victory. const the clash continue!**`,
-    title: "Clash Royale: The Royal Duel",
+    title: "PUBG Solo TPP: Kill Challenge",
     label: "Join challenge",
     error: {
       message: "Some error occurred, please refresh",
@@ -192,7 +171,8 @@ ${leaderboard
           parameters: [
             {
               name: "tag",
-              label: "Enter your player tag",
+              label: "Enter your in-game username",
+              required: true,
             },
           ],
         },
@@ -202,10 +182,10 @@ ${leaderboard
   };
   return NextResponse.json(response, {
     headers: {
-          ...ACTIONS_CORS_HEADERS,
-          "X-Action-Version": "2.1.3",
-          "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
-        },
+      ...ACTIONS_CORS_HEADERS,
+      "X-Action-Version": "2.1.3",
+      "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+    },
   });
 }
 
@@ -226,82 +206,32 @@ export async function POST(request: NextRequest) {
 
     // Validate input
     if (!tag) {
-      const errorRes: ActionError = {
-        message: "Player tag must be provided",
-      };
-      return new Response(JSON.stringify(errorRes), {
-        status: 400,
-        headers: {
-          ...ACTIONS_CORS_HEADERS,
-          "X-Action-Version": "2.1.3",
-          "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
-        },
-      });
+      return createErrorResponse("Player tag must be provided");
     }
 
     if (!gameID) {
-      const errorRes: ActionError = {
-        message: "Game ID not found",
-      };
-      return new Response(JSON.stringify(errorRes), {
-        status: 400,
-        headers: {
-          ...ACTIONS_CORS_HEADERS,
-          "X-Action-Version": "2.1.3",
-          "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
-        },
-      });
+      return createErrorResponse("Game ID not foun", 404);
     }
 
     // Find the game record in the database
     const gameRec = await GameRecord.findOne({ gameID });
 
     if (!gameRec) {
-      const errorRes: ActionError = {
-        message: `No game found with game ID ${gameID}`,
-      };
-      return new Response(JSON.stringify(errorRes), {
-        status: 400,
-        headers: {
-          ...ACTIONS_CORS_HEADERS,
-          "X-Action-Version": "2.1.3",
-          "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
-        },
-      });
+      return createErrorResponse(`No game found with game ID ${gameID}`, 400);
     }
 
     let sender: PublicKey;
     try {
       sender = new PublicKey(body.account);
     } catch {
-      const errorRes: ActionError = {
-        message: "Invalid account",
-      };
-      return new Response(JSON.stringify(errorRes), {
-        status: 400,
-        headers: {
-          ...ACTIONS_CORS_HEADERS,
-          "X-Action-Version": "2.1.3",
-          "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
-        },
-      });
+      return createErrorResponse("Invalid account", 400);
     }
 
     // Connect to MongoDB and create a new game record
     const mongoDB = await connectToMongoDB();
 
     if (!mongoDB) {
-      const errorRes: ActionError = {
-        message: "Some error occurred, please try again",
-      };
-      return new Response(JSON.stringify(errorRes), {
-        status: 400,
-        headers: {
-          ...ACTIONS_CORS_HEADERS,
-          "X-Action-Version": "2.1.3",
-          "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
-        },
-      });
+      return createErrorResponse("Failed to connect to database");
     }
 
     const existingPlayer = gameRec.players.find(
@@ -309,50 +239,22 @@ export async function POST(request: NextRequest) {
     );
 
     if (existingPlayer) {
-      const errorRes: ActionError = {
-        message: "Player already exists in the game",
-      };
-      return new Response(JSON.stringify(errorRes), {
-        status: 400,
-        headers: {
-          ...ACTIONS_CORS_HEADERS,
-          "X-Action-Version": "2.1.3",
-          "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
-        },
-      });
+      return createErrorResponse(`Player ${tag} is already the game`);
     }
 
-    const qres = await fetch(
-      `https://api.clashofclans.com/v1/players/%23${tag}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/vnd.api+json",
-          Authorization: `Bearer ${process.env.COC_API_KEY}`,
-        },
-      }
-    );
+    const playerId = await FetchPlayerId(tag);
 
-    const playerData = await qres.json();
-
-    if (!playerData) {
-      const errorRes: ActionError = {
-        message: `No player found with the provided ID: #${tag}`,
-      };
-      return new Response(JSON.stringify(errorRes), {
-        status: 400,
-        headers: {
-          ...ACTIONS_CORS_HEADERS,
-          "X-Action-Version": "2.1.3",
-          "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
-        },
-      });
+    if (!playerId) {
+      return createErrorResponse("Failed to fetch player ID");
     }
+
+    const wins = await FetchPlayerStats(playerId);
+
     // Add the new player to the game
     gameRec.players.push({
       playerID: tag,
       pubkey: body.account,
-      wins: playerData.attackWins,
+      wins: wins,
     });
 
     gameRec.prizePool += gameRec.prizePool;
@@ -388,19 +290,12 @@ export async function POST(request: NextRequest) {
     const requiredBalance = amount * LAMPORTS_PER_SOL + fee!;
 
     if (balance < requiredBalance) {
-      const errorRes: ActionError = {
-        message: `Insufficient funds. Available: ${
+      return createErrorResponse(
+        `Insufficient funds. Available: ${
           balance * LAMPORTS_PER_SOL
         } SOL, Needed: ${requiredBalance.toFixed(6)} SOL`,
-      };
-      return NextResponse.json(errorRes, {
-        status: 400,
-        headers: {
-          ...ACTIONS_CORS_HEADERS,
-          "X-Action-Version": "2.1.3",
-          "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
-        },
-      });
+        400
+      );
     }
 
     const encodedURI = encodeURIComponent(url.href);
@@ -419,16 +314,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(payload, { headers: ACTIONS_CORS_HEADERS });
   } catch (error) {
     console.error("Error processing POST request:", error);
-    const errorRes: ActionError = {
-      message: "An error occurred while processing the request.",
-    };
-    return new Response(JSON.stringify(errorRes), {
-      status: 400,
-      headers: {
-          ...ACTIONS_CORS_HEADERS,
-          "X-Action-Version": "2.1.3",
-          "X-Blockchain-Ids": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
-        },
-    });
+    return createErrorResponse(
+      "An error occurred while processing the request.",
+      500
+    );
   }
 }
