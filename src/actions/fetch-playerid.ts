@@ -12,8 +12,6 @@ export async function FetchPlayerId(playerName: string): Promise<string> {
 
     const playerData = await lookipRes.json();
 
-    console.log("Player ID:",playerData.data[0].id);
-
     return playerData.data[0].id;
   } catch (error) {
     return error instanceof Error ? error.message : "An unknown error occurred";
@@ -33,11 +31,6 @@ export async function FetchPlayerStats(playerID: string) {
     });
 
     const playerStats = await data.json();
-
-    console.log(
-      "Player Stats:",
-      playerStats.data[0].attributes.gameModeStats.solo.kills
-    );
 
     return playerStats.data[0].attributes.gameModeStats.solo.kills;
   } catch (error) {

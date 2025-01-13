@@ -140,6 +140,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    console.log("Kills:", kills, "Types:", typeof kills);
+
     const player = {
       playerID: tag,
       pubkey: body.account,
