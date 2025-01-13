@@ -1,5 +1,4 @@
 import {
-  ActionError,
   ActionGetResponse,
   ActionPostRequest,
   ActionPostResponse,
