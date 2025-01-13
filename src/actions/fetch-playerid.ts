@@ -22,6 +22,8 @@ export async function FetchPlayerStats(playerID: string) {
   try {
     const apiUrl = `https://api.pubg.com/shards/steam/seasons/lifetime/gameMode/solo/players?filter[playerIds]=${playerID}`;
 
+    console.log("API url:", apiUrl);
+
     const data = await fetch(apiUrl, {
       method: "GET",
       headers: {
@@ -34,6 +36,7 @@ export async function FetchPlayerStats(playerID: string) {
 
     return playerStats.data[0].attributes.gameModeStats.solo.kills;
   } catch (error) {
+    console.error("Error occured:", error);
     return (error as Error).message;
   }
 }
