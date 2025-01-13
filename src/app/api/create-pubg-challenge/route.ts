@@ -129,8 +129,10 @@ export async function POST(request: NextRequest) {
 
     const kills = await FetchPlayerStats(playerId);
 
-    if (!kills) {
-      return createErrorResponse("Failed to get player stats");
+    if (!kills && typeof kills !== "number") {
+      return createErrorResponse(
+        "Failed to get player stats or kills is not a number"
+      );
     }
 
     const player = {

@@ -249,8 +249,8 @@ export async function POST(request: NextRequest) {
 
     const wins = await FetchPlayerStats(playerId);
 
-    if (!wins) {
-      return createErrorResponse("Failed to get player stats");
+    if (!wins && typeof wins !== "number") {
+      return createErrorResponse("Failed to get player stats or kills is not a number");
     }
 
     // Add the new player to the game
