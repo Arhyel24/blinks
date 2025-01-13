@@ -47,6 +47,10 @@ export async function GET(request: NextRequest) {
     try {
       const playerId = await FetchPlayerId(tag);
 
+      if (playerId === null) {
+        return 0;
+      }
+
       const kills = await FetchPlayerStats(playerId);
 
       return kills;
@@ -243,21 +247,23 @@ export async function POST(request: NextRequest) {
 
     const playerId = await FetchPlayerId(tag);
 
-    if (!playerId) {
-      return createErrorResponse("Failed to fetch player ID");
+    if (playerId === null) {
+      return createErrorResponse("Failed to find player");
     }
 
-    const wins = await FetchPlayerStats(playerId);
+    const kills = await FetchPlayerStats(playerId);
 
-    if (!wins && typeof wins !== "number") {
-      return createErrorResponse("Failed to get player stats or kills is not a number");
+    if (kills === null && typeof kills !== "number") {
+      return createErrorResponse(
+        "Failed to get player stats or kills is not a number"
+      );
     }
 
     // Add the new player to the game
     gameRec.players.push({
       playerID: tag,
       pubkey: body.account,
-      wins: wins,
+      wins: kills,
     });
 
     gameRec.prizePool += gameRec.prizePool;

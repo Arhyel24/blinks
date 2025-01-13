@@ -123,21 +123,17 @@ export async function POST(request: NextRequest) {
 
     const playerId = await FetchPlayerId(tag);
 
-    if (!playerId) {
+    if (playerId === null) {
       return createErrorResponse("Failed to find player");
     }
 
-    console.log("Player account Id:", playerId)
-
     const kills = await FetchPlayerStats(playerId);
 
-    if (!kills && typeof kills !== "number") {
+    if (kills === null && typeof kills !== "number") {
       return createErrorResponse(
         "Failed to get player stats or kills is not a number"
       );
     }
-
-    console.log("Kills:", kills, "Types:", typeof kills);
 
     const player = {
       playerID: tag,
