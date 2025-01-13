@@ -98,6 +98,11 @@ export async function POST(request: NextRequest) {
     const tag = url.searchParams.get("tag");
     const duration = Number(url.searchParams.get("duration"));
 
+    if (!process.env.PUBG_KEY) {
+      console.log("Failed to retrieve environment variable");
+    } else {
+      console.log("PUBG API key found:", process.env.PUBG_KEY.slice(0, 8));
+    }
     const gameAccount = new PublicKey(
       "4tHXydupmCFzqqzRLBnzu5iSttatVwjPjx48A45keay8"
     );
