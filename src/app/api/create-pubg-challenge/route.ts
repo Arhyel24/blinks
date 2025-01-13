@@ -129,6 +129,10 @@ export async function POST(request: NextRequest) {
 
     const kills = await FetchPlayerStats(playerId);
 
+    if (!kills) {
+      return createErrorResponse("Failed to get player stats");
+    }
+
     const player = {
       playerID: tag,
       pubkey: body.account,

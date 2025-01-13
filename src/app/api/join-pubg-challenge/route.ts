@@ -249,6 +249,10 @@ export async function POST(request: NextRequest) {
 
     const wins = await FetchPlayerStats(playerId);
 
+    if (!wins) {
+      return createErrorResponse("Failed to get player stats");
+    }
+
     // Add the new player to the game
     gameRec.players.push({
       playerID: tag,

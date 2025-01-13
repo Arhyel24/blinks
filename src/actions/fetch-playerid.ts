@@ -34,6 +34,6 @@ export async function FetchPlayerStats(playerID: string) {
 
     return playerStats.data[0].attributes.gameModeStats.solo.kills || 0;
   } catch (error) {
-    return (error as Error).message;
+    return 0;
   }
 }
