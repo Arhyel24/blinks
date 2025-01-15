@@ -94,9 +94,7 @@ export async function POST(request: NextRequest) {
     const tag = url.searchParams.get("tag");
     const duration = Number(url.searchParams.get("duration"));
 
-    const gameAccount = new PublicKey(
-      "4tHXydupmCFzqqzRLBnzu5iSttatVwjPjx48A45keay8"
-    );
+    const gameAccount = new PublicKey(process.env.POOL_WALLET_ADDRESS!);
 
     // Validate input
     if (!amount || !tag || !duration) {

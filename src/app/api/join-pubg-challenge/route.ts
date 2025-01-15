@@ -199,9 +199,7 @@ export async function POST(request: NextRequest) {
     const tag = url.searchParams.get("tag");
     const gameID = url.searchParams.get("gameID");
 
-    const gameAccount = new PublicKey(
-      "4tHXydupmCFzqqzRLBnzu5iSttatVwjPjx48A45keay8"
-    );
+    const gameAccount = new PublicKey(process.env.POOL_WALLET_ADDRESS!);
 
     // Validate input
     if (!tag) {
