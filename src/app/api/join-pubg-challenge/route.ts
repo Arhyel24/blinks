@@ -22,10 +22,6 @@ import bs58 from "bs58";
 import { createErrorResponse } from "@/actions/error-reponse";
 import { FetchPlayerId, FetchPlayerStats } from "@/actions/fetch-playerid";
 
-// #YU80RGRG8;
-// #89YQU2PVQ
-// #QRPQLGYGR;
-
 export async function GET(request: NextRequest) {
   const url = new URL(request.url);
   const gameID = url.searchParams.get("gameID");
@@ -200,7 +196,7 @@ export async function POST(request: NextRequest) {
     const url = new URL(request.url);
 
     const amount = Number(url.searchParams.get("amount"));
-    const tag = url.searchParams.get("tag")?.slice(1);
+    const tag = url.searchParams.get("tag");
     const gameID = url.searchParams.get("gameID");
 
     const gameAccount = new PublicKey(
@@ -307,7 +303,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const encodedURI = encodeURIComponent(url.href);
+    const baseuri = `${url.origin}/api/join-pubg-challenge/?gameID=${gameID}`;
+    const encodedURI = encodeURIComponent(baseuri);
 
     const uri = `https://dial.to/?action=solana-action%3A${encodedURI}`;
 

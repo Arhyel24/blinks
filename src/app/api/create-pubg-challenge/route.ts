@@ -19,10 +19,6 @@ import { connectToMongoDB } from "@/app/lib/connectDB";
 import { FetchPlayerId, FetchPlayerStats } from "@/actions/fetch-playerid";
 import { createErrorResponse } from "@/actions/error-reponse";
 
-// #YU80RGRG8;
-// #89YQU2PVQ
-// #QRPQLGYGR;
-
 export async function GET(request: NextRequest) {
   const url = new URL(request.url);
 
@@ -187,7 +183,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const baseuri = `${url.origin}/api/join-coc-challenge/?gameID=${savedRecord.gameID}`;
+    const baseuri = `${url.origin}/api/join-pubg-challenge/?gameID=${savedRecord.gameID}`;
     const encodedURI = encodeURIComponent(baseuri);
 
     const uri = `https://dial.to/?action=solana-action%3A${encodedURI}`;
@@ -197,7 +193,7 @@ export async function POST(request: NextRequest) {
       fields: {
         type: "transaction",
         transaction,
-        message: `The challenge is on! Share this link with your friends and const the games begin: ${uri}`,
+        message: `The challenge is on! Share this link with your friends and const the games begin: [${uri}](${uri})`,
       },
     });
 
